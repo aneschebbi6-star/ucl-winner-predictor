@@ -320,6 +320,66 @@ class FootballDataScraper:
             df = df.sort_values("Date", ascending=False).head(limit).reset_index(drop=True)
         return df
 
+    # ─────────────────────────────────────────────────────
+    # Blessures et Suspensions (Scraping de Transfermarkt)
+    # ─────────────────────────────────────────────────────
+    def get_injuries(self) -> dict:
+        """
+        Récupère la liste des blessés/suspendus depuis Transfermarkt.
+        Calcule un Injury Impact Score approximatif.
+        """
+        import requests
+        from bs4 import BeautifulSoup
+        
+        print("   🚑 Scraping des données de blessures et suspensions (Transfermarkt)...")
+        
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        }
+        
+        teams_urls = {
+            "PSG": "https://www.transfermarkt.com/paris-saint-germain/sperrenundverletzungen/verein/583",
+            "Arsenal": "https://www.transfermarkt.com/fc-arsenal/sperrenundverletzungen/verein/11"
+        }
+        
+        injuries_data = {}
+        
+        for team, url in teams_urls.items():
+            print(f"      📡 Scraping {team}...")
+            injuries_data[team] = {"players": []}
+            try:
+                r = requests.get(url, headers=headers, timeout=15)
+                if r.status_code == 200:
+                    soup = BeautifulSoup(r.text, 'html.parser')
+                    table = soup.find('table', {'class': 'items'})
+                    if table:
+                        rows = table.find('tbody').find_all('tr', recursive=False)
+                        for row in rows:
+                            cols = row.find_all('td')
+                            if len(cols) == 9: # Ligne d'un joueur
+                                name = cols[2].text.strip()
+                                injury = cols[5].text.strip()
+                                
+                                # Assignation basique de l'importance (3 par défaut)
+                                importance = 3
+                                if "cruciate" in injury.lower() or "achilles" in injury.lower():
+                                    importance = 4
+                                
+                                injuries_data[team]["players"].append({
+                                    "name": name,
+                                    "type": injury,
+                                    "importance": importance
+                                })
+            except Exception as e:
+                print(f"      ❌ Erreur scraping {team} : {e}")
+                
+        # Calcul de l'Injury Impact Score
+        for team, data in injuries_data.items():
+            impact_score = sum(p["importance"] for p in data["players"])
+            data["impact_score"] = impact_score
+            
+        return injuries_data
+
 
 # ══════════════════════════════════════════════════════════════
 # AFFICHAGE
@@ -488,8 +548,8 @@ if __name__ == "__main__":
                 print(f"\n  🔥 Phase finale CL ({len(knockout)} matchs) :")
                 for _, row in knockout.iterrows():
                     date_str = row["Date"].strftime("%Y-%m-%d") if hasattr(row["Date"], "strftime") else str(row["Date"])[:10]
-                    if row["Home_Goals"] is not None:
-                        score = f"{int(row['Home_Goals'])}-{int(row['Away_Goals'])}"
+                    if pd.notna(row["Home_Goals"]):
+                        score = f"{int(float(row['Home_Goals']))}-{int(float(row['Away_Goals']))}"
                     else:
                         score = "à venir"
                     stage_short = row["Stage"].replace("_", " ").title()
@@ -497,6 +557,21 @@ if __name__ == "__main__":
                         f"     {date_str} | {stage_short:20s} | "
                         f"{row['Home']:25s} {score:>5s} {row['Away']}"
                     )
+
+        # ── Blessures et Suspensions ─────────────────────
+        print("\n\n🚑 Blessures et Suspensions\n")
+        injuries = scraper.get_injuries()
+        
+        os.makedirs("data/processed", exist_ok=True)
+        injuries_path = "data/processed/injuries_impact.json"
+        with open(injuries_path, "w", encoding="utf-8") as f:
+            json.dump(injuries, f, indent=2, ensure_ascii=False)
+        print(f"   💾 Sauvegardé : {injuries_path}")
+        
+        for team, data in injuries.items():
+            print(f"\n  🤕 {team} — Impact Score : {data['impact_score']}")
+            for p in data["players"]:
+                print(f"     • {p['name']} ({p['type']}) - Importance: {p['importance']}/5")
 
         # ── Résumé final ─────────────────────────────────
         print("\n" + "=" * 70)

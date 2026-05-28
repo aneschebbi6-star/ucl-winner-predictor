@@ -1,0 +1,25 @@
+{
+  "PSG": {
+    "team": "PSG",
+    "form_5": 1.6,
+    "form_10": 1.948,
+    "avg_goals_scored_5": 1.4,
+    "avg_goals_conceded_5": 1.0,
+    "season_win_rate": 0.68,
+    "champions_league_win_rate": 0.625,
+    "clean_sheet_pct": 0.46,
+    "injury_impact_score": 15
+  },
+  "Arsenal": {
+    "team": "Arsenal",
+    "form_5": 3.0,
+    "form_10": 2.215,
+    "avg_goals_scored_5": 1.6,
+    "avg_goals_conceded_5": 0.2,
+    "season_win_rate": 0.712,
+    "champions_league_win_rate": 0.786,
+    "clean_sheet_pct": 0.538,
+    "injury_impact_score": 3
+  },
+  "generated_at": "2026-05-28T16:55:20.101970"
+}

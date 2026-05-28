@@ -1,0 +1,42 @@
+{
+  "PSG": {
+    "players": [
+      {
+        "name": "Quentin Ndjantou",
+        "type": "Hamstring injury",
+        "importance": 3
+      },
+      {
+        "name": "Nuno Mendes",
+        "type": "Dead leg",
+        "importance": 3
+      },
+      {
+        "name": "Willian Pacho",
+        "type": "Dead leg",
+        "importance": 3
+      },
+      {
+        "name": "Warren Zaïre-Emery",
+        "type": "Back injury",
+        "importance": 3
+      },
+      {
+        "name": "Ousmane Dembélé",
+        "type": "Calf injury",
+        "importance": 3
+      }
+    ],
+    "impact_score": 15
+  },
+  "Arsenal": {
+    "players": [
+      {
+        "name": "Ben White",
+        "type": "Knee injury",
+        "importance": 3
+      }
+    ],
+    "impact_score": 3
+  }
+}
