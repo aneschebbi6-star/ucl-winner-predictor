@@ -1,41 +1,48 @@
 Date,Competition,Comp_Code,Matchday,Home,Away,Home_Goals,Away_Goals,Team,Opponent,Venue,Buts_Pour,Buts_Contre,Resultat,Stage,Group,y_target
-2025-08-17,Ligue 1,FL1,1,FC Nantes,Paris Saint-Germain FC,0,1,Paris Saint-Germain FC,FC Nantes,Away,1,0,W,REGULAR_SEASON,,1
-2025-08-17,Premier League,PL,1,Manchester United FC,Arsenal FC,0,1,Arsenal FC,Manchester United FC,Away,1,0,W,REGULAR_SEASON,,1
+2025-08-17,Ligue 1,FL1,1,FC Nantes,Paris Saint-Germain FC,0,1,Paris Saint-Germain FC,FC Nantes,Away,1,0,W,REGULAR_SEASON,,2
+2025-08-17,Premier League,PL,1,Manchester United FC,Arsenal FC,0,1,Arsenal FC,Manchester United FC,Away,1,0,W,REGULAR_SEASON,,2
 2025-08-22,Ligue 1,FL1,2,Paris Saint-Germain FC,Angers SCO,1,0,Paris Saint-Germain FC,Angers SCO,Home,1,0,W,REGULAR_SEASON,,0
 2025-08-23,Premier League,PL,2,Arsenal FC,Leeds United FC,5,0,Arsenal FC,Leeds United FC,Home,5,0,W,REGULAR_SEASON,,0
-2025-08-30,Ligue 1,FL1,3,Toulouse FC,Paris Saint-Germain FC,3,6,Paris Saint-Germain FC,Toulouse FC,Away,6,3,W,REGULAR_SEASON,,1
+2025-08-30,Ligue 1,FL1,3,Toulouse FC,Paris Saint-Germain FC,3,6,Paris Saint-Germain FC,Toulouse FC,Away,6,3,W,REGULAR_SEASON,,2
 2025-08-31,Premier League,PL,3,Liverpool FC,Arsenal FC,1,0,Arsenal FC,Liverpool FC,Away,0,1,L,REGULAR_SEASON,,0
 2025-09-13,Premier League,PL,4,Arsenal FC,Nottingham Forest FC,3,0,Arsenal FC,Nottingham Forest FC,Home,3,0,W,REGULAR_SEASON,,0
 2025-09-14,Ligue 1,FL1,4,Paris Saint-Germain FC,Racing Club de Lens,2,0,Paris Saint-Germain FC,Racing Club de Lens,Home,2,0,W,REGULAR_SEASON,,0
-2025-09-16,Champions League,CL,1,Athletic Club,Arsenal FC,0,2,Arsenal FC,Athletic Club,Away,2,0,W,LEAGUE_STAGE,,1
+2025-09-16,Champions League,CL,1,Athletic Club,Arsenal FC,0,2,Arsenal FC,Athletic Club,Away,2,0,W,LEAGUE_STAGE,,2
 2025-09-17,Champions League,CL,1,Paris Saint-Germain FC,Atalanta BC,4,0,Paris Saint-Germain FC,Atalanta BC,Home,4,0,W,LEAGUE_STAGE,,0
+2025-09-21,Premier League,PL,5,Arsenal FC,Manchester City FC,1,1,Arsenal FC,Manchester City FC,Home,1,1,D,REGULAR_SEASON,,1
 2025-09-22,Ligue 1,FL1,5,Olympique de Marseille,Paris Saint-Germain FC,1,0,Paris Saint-Germain FC,Olympique de Marseille,Away,0,1,L,REGULAR_SEASON,,0
 2025-09-27,Ligue 1,FL1,6,Paris Saint-Germain FC,AJ Auxerre,2,0,Paris Saint-Germain FC,AJ Auxerre,Home,2,0,W,REGULAR_SEASON,,0
-2025-09-28,Premier League,PL,6,Newcastle United FC,Arsenal FC,1,2,Arsenal FC,Newcastle United FC,Away,2,1,W,REGULAR_SEASON,,1
+2025-09-28,Premier League,PL,6,Newcastle United FC,Arsenal FC,1,2,Arsenal FC,Newcastle United FC,Away,2,1,W,REGULAR_SEASON,,2
 2025-10-01,Champions League,CL,2,Arsenal FC,PAE Olympiakos SFP,2,0,Arsenal FC,PAE Olympiakos SFP,Home,2,0,W,LEAGUE_STAGE,,0
-2025-10-01,Champions League,CL,2,FC Barcelona,Paris Saint-Germain FC,1,2,Paris Saint-Germain FC,FC Barcelona,Away,2,1,W,LEAGUE_STAGE,,1
+2025-10-01,Champions League,CL,2,FC Barcelona,Paris Saint-Germain FC,1,2,Paris Saint-Germain FC,FC Barcelona,Away,2,1,W,LEAGUE_STAGE,,2
 2025-10-04,Premier League,PL,7,Arsenal FC,West Ham United FC,2,0,Arsenal FC,West Ham United FC,Home,2,0,W,REGULAR_SEASON,,0
-2025-10-18,Premier League,PL,8,Fulham FC,Arsenal FC,0,1,Arsenal FC,Fulham FC,Away,1,0,W,REGULAR_SEASON,,1
-2025-10-21,Champions League,CL,3,Bayer 04 Leverkusen,Paris Saint-Germain FC,2,7,Paris Saint-Germain FC,Bayer 04 Leverkusen,Away,7,2,W,LEAGUE_STAGE,,1
+2025-10-05,Ligue 1,FL1,7,Lille OSC,Paris Saint-Germain FC,1,1,Paris Saint-Germain FC,Lille OSC,Away,1,1,D,REGULAR_SEASON,,1
+2025-10-17,Ligue 1,FL1,8,Paris Saint-Germain FC,RC Strasbourg Alsace,3,3,Paris Saint-Germain FC,RC Strasbourg Alsace,Home,3,3,D,REGULAR_SEASON,,1
+2025-10-18,Premier League,PL,8,Fulham FC,Arsenal FC,0,1,Arsenal FC,Fulham FC,Away,1,0,W,REGULAR_SEASON,,2
 2025-10-21,Champions League,CL,3,Arsenal FC,Club Atlético de Madrid,4,0,Arsenal FC,Club Atlético de Madrid,Home,4,0,W,LEAGUE_STAGE,,0
-2025-10-25,Ligue 1,FL1,9,Stade Brestois 29,Paris Saint-Germain FC,0,3,Paris Saint-Germain FC,Stade Brestois 29,Away,3,0,W,REGULAR_SEASON,,1
+2025-10-21,Champions League,CL,3,Bayer 04 Leverkusen,Paris Saint-Germain FC,2,7,Paris Saint-Germain FC,Bayer 04 Leverkusen,Away,7,2,W,LEAGUE_STAGE,,2
+2025-10-25,Ligue 1,FL1,9,Stade Brestois 29,Paris Saint-Germain FC,0,3,Paris Saint-Germain FC,Stade Brestois 29,Away,3,0,W,REGULAR_SEASON,,2
 2025-10-26,Premier League,PL,9,Arsenal FC,Crystal Palace FC,1,0,Arsenal FC,Crystal Palace FC,Home,1,0,W,REGULAR_SEASON,,0
-2025-11-01,Premier League,PL,10,Burnley FC,Arsenal FC,0,2,Arsenal FC,Burnley FC,Away,2,0,W,REGULAR_SEASON,,1
+2025-10-29,Ligue 1,FL1,10,FC Lorient,Paris Saint-Germain FC,1,1,Paris Saint-Germain FC,FC Lorient,Away,1,1,D,REGULAR_SEASON,,1
 2025-11-01,Ligue 1,FL1,11,Paris Saint-Germain FC,OGC Nice,1,0,Paris Saint-Germain FC,OGC Nice,Home,1,0,W,REGULAR_SEASON,,0
-2025-11-04,Champions League,CL,4,Paris Saint-Germain FC,FC Bayern München,1,2,Paris Saint-Germain FC,FC Bayern München,Home,1,2,L,LEAGUE_STAGE,,1
-2025-11-04,Champions League,CL,4,SK Slavia Praha,Arsenal FC,0,3,Arsenal FC,SK Slavia Praha,Away,3,0,W,LEAGUE_STAGE,,1
-2025-11-09,Ligue 1,FL1,12,Olympique Lyonnais,Paris Saint-Germain FC,2,3,Paris Saint-Germain FC,Olympique Lyonnais,Away,3,2,W,REGULAR_SEASON,,1
+2025-11-01,Premier League,PL,10,Burnley FC,Arsenal FC,0,2,Arsenal FC,Burnley FC,Away,2,0,W,REGULAR_SEASON,,2
+2025-11-04,Champions League,CL,4,SK Slavia Praha,Arsenal FC,0,3,Arsenal FC,SK Slavia Praha,Away,3,0,W,LEAGUE_STAGE,,2
+2025-11-04,Champions League,CL,4,Paris Saint-Germain FC,FC Bayern München,1,2,Paris Saint-Germain FC,FC Bayern München,Home,1,2,L,LEAGUE_STAGE,,2
+2025-11-08,Premier League,PL,11,Sunderland AFC,Arsenal FC,2,2,Arsenal FC,Sunderland AFC,Away,2,2,D,REGULAR_SEASON,,1
+2025-11-09,Ligue 1,FL1,12,Olympique Lyonnais,Paris Saint-Germain FC,2,3,Paris Saint-Germain FC,Olympique Lyonnais,Away,3,2,W,REGULAR_SEASON,,2
 2025-11-22,Ligue 1,FL1,13,Paris Saint-Germain FC,Le Havre AC,3,0,Paris Saint-Germain FC,Le Havre AC,Home,3,0,W,REGULAR_SEASON,,0
 2025-11-23,Premier League,PL,12,Arsenal FC,Tottenham Hotspur FC,4,1,Arsenal FC,Tottenham Hotspur FC,Home,4,1,W,REGULAR_SEASON,,0
-2025-11-26,Champions League,CL,5,Paris Saint-Germain FC,Tottenham Hotspur FC,5,3,Paris Saint-Germain FC,Tottenham Hotspur FC,Home,5,3,W,LEAGUE_STAGE,,0
 2025-11-26,Champions League,CL,5,Arsenal FC,FC Bayern München,3,1,Arsenal FC,FC Bayern München,Home,3,1,W,LEAGUE_STAGE,,0
+2025-11-26,Champions League,CL,5,Paris Saint-Germain FC,Tottenham Hotspur FC,5,3,Paris Saint-Germain FC,Tottenham Hotspur FC,Home,5,3,W,LEAGUE_STAGE,,0
 2025-11-29,Ligue 1,FL1,14,AS Monaco FC,Paris Saint-Germain FC,1,0,Paris Saint-Germain FC,AS Monaco FC,Away,0,1,L,REGULAR_SEASON,,0
+2025-11-30,Premier League,PL,13,Chelsea FC,Arsenal FC,1,1,Arsenal FC,Chelsea FC,Away,1,1,D,REGULAR_SEASON,,1
 2025-12-03,Premier League,PL,14,Arsenal FC,Brentford FC,2,0,Arsenal FC,Brentford FC,Home,2,0,W,REGULAR_SEASON,,0
 2025-12-06,Premier League,PL,15,Aston Villa FC,Arsenal FC,2,1,Arsenal FC,Aston Villa FC,Away,1,2,L,REGULAR_SEASON,,0
 2025-12-06,Ligue 1,FL1,15,Paris Saint-Germain FC,Stade Rennais FC 1901,5,0,Paris Saint-Germain FC,Stade Rennais FC 1901,Home,5,0,W,REGULAR_SEASON,,0
-2025-12-10,Champions League,CL,6,Club Brugge KV,Arsenal FC,0,3,Arsenal FC,Club Brugge KV,Away,3,0,W,LEAGUE_STAGE,,1
+2025-12-10,Champions League,CL,6,Club Brugge KV,Arsenal FC,0,3,Arsenal FC,Club Brugge KV,Away,3,0,W,LEAGUE_STAGE,,2
+2025-12-10,Champions League,CL,6,Athletic Club,Paris Saint-Germain FC,0,0,Paris Saint-Germain FC,Athletic Club,Away,0,0,D,LEAGUE_STAGE,,1
 2025-12-13,Premier League,PL,16,Arsenal FC,Wolverhampton Wanderers FC,2,1,Arsenal FC,Wolverhampton Wanderers FC,Home,2,1,W,REGULAR_SEASON,,0
-2025-12-13,Ligue 1,FL1,16,FC Metz,Paris Saint-Germain FC,2,3,Paris Saint-Germain FC,FC Metz,Away,3,2,W,REGULAR_SEASON,,1
-2025-12-20,Premier League,PL,17,Everton FC,Arsenal FC,0,1,Arsenal FC,Everton FC,Away,1,0,W,REGULAR_SEASON,,1
+2025-12-13,Ligue 1,FL1,16,FC Metz,Paris Saint-Germain FC,2,3,Paris Saint-Germain FC,FC Metz,Away,3,2,W,REGULAR_SEASON,,2
+2025-12-20,Premier League,PL,17,Everton FC,Arsenal FC,0,1,Arsenal FC,Everton FC,Away,1,0,W,REGULAR_SEASON,,2
 2025-12-27,Premier League,PL,18,Arsenal FC,Brighton & Hove Albion FC,2,1,Arsenal FC,Brighton & Hove Albion FC,Home,2,1,W,REGULAR_SEASON,,0
 2025-12-30,Premier League,PL,19,Arsenal FC,Aston Villa FC,4,1,Arsenal FC,Aston Villa FC,Home,4,1,W,REGULAR_SEASON,,0

@@ -71,7 +71,7 @@ def evaluate_model(name, model, X_test, y_test):
     y_proba = model.predict_proba(X_test)
     
     acc = accuracy_score(y_test, y_pred)
-    ll = log_loss(y_test, y_proba)
+    ll = log_loss(y_test, y_proba, labels=model.classes_)
     cm = confusion_matrix(y_test, y_pred)
     
     print_section(f"📈 {name}")
@@ -120,7 +120,7 @@ def main():
     if HAS_XGB:
         print("\nEntraînement de XGBoost...")
         xgb_pipeline = Pipeline(steps=[('preprocessor', preprocessor),
-                                      ('classifier', XGBClassifier(use_label_encoder=False, eval_metric='logloss', random_state=42))])
+                                      ('classifier', XGBClassifier(use_label_encoder=False, eval_metric='mlogloss', random_state=42))])
         
         xgb_param_grid = {
             'classifier__n_estimators': [50, 100],

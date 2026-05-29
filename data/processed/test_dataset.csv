@@ -1,45 +1,56 @@
 Date,Competition,Comp_Code,Matchday,Home,Away,Home_Goals,Away_Goals,Team,Opponent,Venue,Buts_Pour,Buts_Contre,Resultat,Stage,Group,y_target
-2026-01-03,Premier League,PL,20,AFC Bournemouth,Arsenal FC,2,3,Arsenal FC,AFC Bournemouth,Away,3,2,W,REGULAR_SEASON,,1
+2026-01-03,Premier League,PL,20,AFC Bournemouth,Arsenal FC,2,3,Arsenal FC,AFC Bournemouth,Away,3,2,W,REGULAR_SEASON,,2
 2026-01-04,Ligue 1,FL1,17,Paris Saint-Germain FC,Paris FC,2,1,Paris Saint-Germain FC,Paris FC,Home,2,1,W,REGULAR_SEASON,,0
+2026-01-08,Premier League,PL,21,Arsenal FC,Liverpool FC,0,0,Arsenal FC,Liverpool FC,Home,0,0,D,REGULAR_SEASON,,1
 2026-01-16,Ligue 1,FL1,18,Paris Saint-Germain FC,Lille OSC,3,0,Paris Saint-Germain FC,Lille OSC,Home,3,0,W,REGULAR_SEASON,,0
-2026-01-20,Champions League,CL,7,FC Internazionale Milano,Arsenal FC,1,3,Arsenal FC,FC Internazionale Milano,Away,3,1,W,LEAGUE_STAGE,,1
+2026-01-17,Premier League,PL,22,Nottingham Forest FC,Arsenal FC,0,0,Arsenal FC,Nottingham Forest FC,Away,0,0,D,REGULAR_SEASON,,1
+2026-01-20,Champions League,CL,7,FC Internazionale Milano,Arsenal FC,1,3,Arsenal FC,FC Internazionale Milano,Away,3,1,W,LEAGUE_STAGE,,2
 2026-01-20,Champions League,CL,7,Sporting Clube de Portugal,Paris Saint-Germain FC,2,1,Paris Saint-Germain FC,Sporting Clube de Portugal,Away,1,2,L,LEAGUE_STAGE,,0
-2026-01-23,Ligue 1,FL1,19,AJ Auxerre,Paris Saint-Germain FC,0,1,Paris Saint-Germain FC,AJ Auxerre,Away,1,0,W,REGULAR_SEASON,,1
-2026-01-25,Premier League,PL,23,Arsenal FC,Manchester United FC,2,3,Arsenal FC,Manchester United FC,Home,2,3,L,REGULAR_SEASON,,1
+2026-01-23,Ligue 1,FL1,19,AJ Auxerre,Paris Saint-Germain FC,0,1,Paris Saint-Germain FC,AJ Auxerre,Away,1,0,W,REGULAR_SEASON,,2
+2026-01-25,Premier League,PL,23,Arsenal FC,Manchester United FC,2,3,Arsenal FC,Manchester United FC,Home,2,3,L,REGULAR_SEASON,,2
+2026-01-28,Champions League,CL,8,Paris Saint-Germain FC,Newcastle United FC,1,1,Paris Saint-Germain FC,Newcastle United FC,Home,1,1,D,LEAGUE_STAGE,,1
 2026-01-28,Champions League,CL,8,Arsenal FC,FK Kairat,3,2,Arsenal FC,FK Kairat,Home,3,2,W,LEAGUE_STAGE,,0
-2026-01-31,Premier League,PL,24,Leeds United FC,Arsenal FC,0,4,Arsenal FC,Leeds United FC,Away,4,0,W,REGULAR_SEASON,,1
-2026-02-01,Ligue 1,FL1,20,RC Strasbourg Alsace,Paris Saint-Germain FC,1,2,Paris Saint-Germain FC,RC Strasbourg Alsace,Away,2,1,W,REGULAR_SEASON,,1
+2026-01-31,Premier League,PL,24,Leeds United FC,Arsenal FC,0,4,Arsenal FC,Leeds United FC,Away,4,0,W,REGULAR_SEASON,,2
+2026-02-01,Ligue 1,FL1,20,RC Strasbourg Alsace,Paris Saint-Germain FC,1,2,Paris Saint-Germain FC,RC Strasbourg Alsace,Away,2,1,W,REGULAR_SEASON,,2
 2026-02-07,Premier League,PL,25,Arsenal FC,Sunderland AFC,3,0,Arsenal FC,Sunderland AFC,Home,3,0,W,REGULAR_SEASON,,0
 2026-02-08,Ligue 1,FL1,21,Paris Saint-Germain FC,Olympique de Marseille,5,0,Paris Saint-Germain FC,Olympique de Marseille,Home,5,0,W,REGULAR_SEASON,,0
+2026-02-12,Premier League,PL,26,Brentford FC,Arsenal FC,1,1,Arsenal FC,Brentford FC,Away,1,1,D,REGULAR_SEASON,,1
 2026-02-13,Ligue 1,FL1,22,Stade Rennais FC 1901,Paris Saint-Germain FC,3,1,Paris Saint-Germain FC,Stade Rennais FC 1901,Away,1,3,L,REGULAR_SEASON,,0
-2026-02-17,Champions League,CL,1,AS Monaco FC,Paris Saint-Germain FC,2,3,Paris Saint-Germain FC,AS Monaco FC,Away,3,2,W,PLAYOFFS,,1
+2026-02-17,Champions League,CL,1,AS Monaco FC,Paris Saint-Germain FC,2,3,Paris Saint-Germain FC,AS Monaco FC,Away,3,2,W,PLAYOFFS,,2
+2026-02-18,Premier League,PL,31,Wolverhampton Wanderers FC,Arsenal FC,2,2,Arsenal FC,Wolverhampton Wanderers FC,Away,2,2,D,REGULAR_SEASON,,1
 2026-02-21,Ligue 1,FL1,23,Paris Saint-Germain FC,FC Metz,3,0,Paris Saint-Germain FC,FC Metz,Home,3,0,W,REGULAR_SEASON,,0
-2026-02-22,Premier League,PL,27,Tottenham Hotspur FC,Arsenal FC,1,4,Arsenal FC,Tottenham Hotspur FC,Away,4,1,W,REGULAR_SEASON,,1
-2026-02-28,Ligue 1,FL1,24,Le Havre AC,Paris Saint-Germain FC,0,1,Paris Saint-Germain FC,Le Havre AC,Away,1,0,W,REGULAR_SEASON,,1
+2026-02-22,Premier League,PL,27,Tottenham Hotspur FC,Arsenal FC,1,4,Arsenal FC,Tottenham Hotspur FC,Away,4,1,W,REGULAR_SEASON,,2
+2026-02-25,Champions League,CL,2,Paris Saint-Germain FC,AS Monaco FC,2,2,Paris Saint-Germain FC,AS Monaco FC,Home,2,2,D,PLAYOFFS,,1
+2026-02-28,Ligue 1,FL1,24,Le Havre AC,Paris Saint-Germain FC,0,1,Paris Saint-Germain FC,Le Havre AC,Away,1,0,W,REGULAR_SEASON,,2
 2026-03-01,Premier League,PL,28,Arsenal FC,Chelsea FC,2,1,Arsenal FC,Chelsea FC,Home,2,1,W,REGULAR_SEASON,,0
-2026-03-04,Premier League,PL,29,Brighton & Hove Albion FC,Arsenal FC,0,1,Arsenal FC,Brighton & Hove Albion FC,Away,1,0,W,REGULAR_SEASON,,1
-2026-03-06,Ligue 1,FL1,25,Paris Saint-Germain FC,AS Monaco FC,1,3,Paris Saint-Germain FC,AS Monaco FC,Home,1,3,L,REGULAR_SEASON,,1
+2026-03-04,Premier League,PL,29,Brighton & Hove Albion FC,Arsenal FC,0,1,Arsenal FC,Brighton & Hove Albion FC,Away,1,0,W,REGULAR_SEASON,,2
+2026-03-06,Ligue 1,FL1,25,Paris Saint-Germain FC,AS Monaco FC,1,3,Paris Saint-Germain FC,AS Monaco FC,Home,1,3,L,REGULAR_SEASON,,2
 2026-03-11,Champions League,CL,1,Paris Saint-Germain FC,Chelsea FC,5,2,Paris Saint-Germain FC,Chelsea FC,Home,5,2,W,LAST_16,,0
+2026-03-11,Champions League,CL,1,Bayer 04 Leverkusen,Arsenal FC,1,1,Arsenal FC,Bayer 04 Leverkusen,Away,1,1,D,LAST_16,,1
 2026-03-14,Premier League,PL,30,Arsenal FC,Everton FC,2,0,Arsenal FC,Everton FC,Home,2,0,W,REGULAR_SEASON,,0
-2026-03-17,Champions League,CL,2,Chelsea FC,Paris Saint-Germain FC,0,3,Paris Saint-Germain FC,Chelsea FC,Away,3,0,W,LAST_16,,1
+2026-03-17,Champions League,CL,2,Chelsea FC,Paris Saint-Germain FC,0,3,Paris Saint-Germain FC,Chelsea FC,Away,3,0,W,LAST_16,,2
 2026-03-17,Champions League,CL,2,Arsenal FC,Bayer 04 Leverkusen,2,0,Arsenal FC,Bayer 04 Leverkusen,Home,2,0,W,LAST_16,,0
-2026-03-21,Ligue 1,FL1,27,OGC Nice,Paris Saint-Germain FC,0,4,Paris Saint-Germain FC,OGC Nice,Away,4,0,W,REGULAR_SEASON,,1
+2026-03-21,Ligue 1,FL1,27,OGC Nice,Paris Saint-Germain FC,0,4,Paris Saint-Germain FC,OGC Nice,Away,4,0,W,REGULAR_SEASON,,2
 2026-04-03,Ligue 1,FL1,28,Paris Saint-Germain FC,Toulouse FC,3,1,Paris Saint-Germain FC,Toulouse FC,Home,3,1,W,REGULAR_SEASON,,0
-2026-04-07,Champions League,CL,1,Sporting Clube de Portugal,Arsenal FC,0,1,Arsenal FC,Sporting Clube de Portugal,Away,1,0,W,QUARTER_FINALS,,1
+2026-04-07,Champions League,CL,1,Sporting Clube de Portugal,Arsenal FC,0,1,Arsenal FC,Sporting Clube de Portugal,Away,1,0,W,QUARTER_FINALS,,2
 2026-04-08,Champions League,CL,1,Paris Saint-Germain FC,Liverpool FC,2,0,Paris Saint-Germain FC,Liverpool FC,Home,2,0,W,QUARTER_FINALS,,0
-2026-04-11,Premier League,PL,32,Arsenal FC,AFC Bournemouth,1,2,Arsenal FC,AFC Bournemouth,Home,1,2,L,REGULAR_SEASON,,1
-2026-04-14,Champions League,CL,2,Liverpool FC,Paris Saint-Germain FC,0,2,Paris Saint-Germain FC,Liverpool FC,Away,2,0,W,QUARTER_FINALS,,1
-2026-04-19,Ligue 1,FL1,30,Paris Saint-Germain FC,Olympique Lyonnais,1,2,Paris Saint-Germain FC,Olympique Lyonnais,Home,1,2,L,REGULAR_SEASON,,1
+2026-04-11,Premier League,PL,32,Arsenal FC,AFC Bournemouth,1,2,Arsenal FC,AFC Bournemouth,Home,1,2,L,REGULAR_SEASON,,2
+2026-04-14,Champions League,CL,2,Liverpool FC,Paris Saint-Germain FC,0,2,Paris Saint-Germain FC,Liverpool FC,Away,2,0,W,QUARTER_FINALS,,2
+2026-04-15,Champions League,CL,2,Arsenal FC,Sporting Clube de Portugal,0,0,Arsenal FC,Sporting Clube de Portugal,Home,0,0,D,QUARTER_FINALS,,1
 2026-04-19,Premier League,PL,33,Manchester City FC,Arsenal FC,2,1,Arsenal FC,Manchester City FC,Away,1,2,L,REGULAR_SEASON,,0
+2026-04-19,Ligue 1,FL1,30,Paris Saint-Germain FC,Olympique Lyonnais,1,2,Paris Saint-Germain FC,Olympique Lyonnais,Home,1,2,L,REGULAR_SEASON,,2
 2026-04-22,Ligue 1,FL1,26,Paris Saint-Germain FC,FC Nantes,3,0,Paris Saint-Germain FC,FC Nantes,Home,3,0,W,REGULAR_SEASON,,0
+2026-04-25,Ligue 1,FL1,31,Angers SCO,Paris Saint-Germain FC,0,3,Paris Saint-Germain FC,Angers SCO,Away,3,0,W,REGULAR_SEASON,,2
 2026-04-25,Premier League,PL,34,Arsenal FC,Newcastle United FC,1,0,Arsenal FC,Newcastle United FC,Home,1,0,W,REGULAR_SEASON,,0
-2026-04-25,Ligue 1,FL1,31,Angers SCO,Paris Saint-Germain FC,0,3,Paris Saint-Germain FC,Angers SCO,Away,3,0,W,REGULAR_SEASON,,1
 2026-04-28,Champions League,CL,1,Paris Saint-Germain FC,FC Bayern München,5,4,Paris Saint-Germain FC,FC Bayern München,Home,5,4,W,SEMI_FINALS,,0
+2026-04-29,Champions League,CL,1,Club Atlético de Madrid,Arsenal FC,1,1,Arsenal FC,Club Atlético de Madrid,Away,1,1,D,SEMI_FINALS,,1
+2026-05-02,Ligue 1,FL1,32,Paris Saint-Germain FC,FC Lorient,2,2,Paris Saint-Germain FC,FC Lorient,Home,2,2,D,REGULAR_SEASON,,1
 2026-05-02,Premier League,PL,35,Arsenal FC,Fulham FC,3,0,Arsenal FC,Fulham FC,Home,3,0,W,REGULAR_SEASON,,0
 2026-05-05,Champions League,CL,2,Arsenal FC,Club Atlético de Madrid,1,0,Arsenal FC,Club Atlético de Madrid,Home,1,0,W,SEMI_FINALS,,0
+2026-05-06,Champions League,CL,2,FC Bayern München,Paris Saint-Germain FC,1,1,Paris Saint-Germain FC,FC Bayern München,Away,1,1,D,SEMI_FINALS,,1
 2026-05-10,Ligue 1,FL1,33,Paris Saint-Germain FC,Stade Brestois 29,1,0,Paris Saint-Germain FC,Stade Brestois 29,Home,1,0,W,REGULAR_SEASON,,0
-2026-05-10,Premier League,PL,36,West Ham United FC,Arsenal FC,0,1,Arsenal FC,West Ham United FC,Away,1,0,W,REGULAR_SEASON,,1
-2026-05-13,Ligue 1,FL1,29,Racing Club de Lens,Paris Saint-Germain FC,0,2,Paris Saint-Germain FC,Racing Club de Lens,Away,2,0,W,REGULAR_SEASON,,1
+2026-05-10,Premier League,PL,36,West Ham United FC,Arsenal FC,0,1,Arsenal FC,West Ham United FC,Away,1,0,W,REGULAR_SEASON,,2
+2026-05-13,Ligue 1,FL1,29,Racing Club de Lens,Paris Saint-Germain FC,0,2,Paris Saint-Germain FC,Racing Club de Lens,Away,2,0,W,REGULAR_SEASON,,2
 2026-05-17,Ligue 1,FL1,34,Paris FC,Paris Saint-Germain FC,2,1,Paris Saint-Germain FC,Paris FC,Away,1,2,L,REGULAR_SEASON,,0
 2026-05-18,Premier League,PL,37,Arsenal FC,Burnley FC,1,0,Arsenal FC,Burnley FC,Home,1,0,W,REGULAR_SEASON,,0
-2026-05-24,Premier League,PL,38,Crystal Palace FC,Arsenal FC,1,2,Arsenal FC,Crystal Palace FC,Away,2,1,W,REGULAR_SEASON,,1
+2026-05-24,Premier League,PL,38,Crystal Palace FC,Arsenal FC,1,2,Arsenal FC,Crystal Palace FC,Away,2,1,W,REGULAR_SEASON,,2
