@@ -19,6 +19,21 @@ import requests
 from dotenv import load_dotenv
 from datetime import datetime
 
+from console import (
+    cl_from_quarters_mask,
+    configure_console,
+    count_hidden_cl_matches,
+    filter_cl_from_quarters,
+    format_date,
+    print_cl_knockout_table,
+    print_footer,
+    print_header,
+    print_kv,
+    print_section,
+)
+
+configure_console()
+
 # ══════════════════════════════════════════════════════════════
 # CONFIGURATION
 # ══════════════════════════════════════════════════════════════
@@ -384,6 +399,17 @@ class FootballDataScraper:
 # ══════════════════════════════════════════════════════════════
 # AFFICHAGE
 # ══════════════════════════════════════════════════════════════
+def _matches_for_display(df: pd.DataFrame) -> pd.DataFrame:
+    """Exclut les matchs LDC avant les quarts (affichage terminal uniquement)."""
+    if df.empty or "Competition" not in df.columns:
+        return df
+    cl_mask = df["Competition"].astype(str).str.contains("Champions", case=False, na=False)
+    if "Stage" not in df.columns:
+        return df[~cl_mask].copy()
+    keep = ~cl_mask | cl_from_quarters_mask(df)
+    return df[keep].copy()
+
+
 def print_team_summary(df: pd.DataFrame, team_name: str):
     """Affiche un résumé des performances réelles."""
     if df.empty:
@@ -393,21 +419,21 @@ def print_team_summary(df: pd.DataFrame, team_name: str):
     wins = (df["Resultat"] == "W").sum()
     draws = (df["Resultat"] == "D").sum()
     losses = (df["Resultat"] == "L").sum()
+    hidden_cl = count_hidden_cl_matches(df)
 
     print(f"\n  📊 {team_name}")
-    print(f"     • Matchs : {len(df)}")
-    print(f"     • Victoires : {wins} | Nuls : {draws} | Défaites : {losses}")
-    print(f"     • Buts marqués : {df['Buts_Pour'].sum()}")
-    print(f"     • Buts encaissés : {df['Buts_Contre'].sum()}")
-    print(f"     • Différence : {df['Buts_Pour'].sum() - df['Buts_Contre'].sum():+d}")
+    print_kv("Matchs", str(len(df)), indent=5)
+    print_kv("Bilan", f"{wins}V | {draws}N | {losses}D", indent=5)
+    print_kv("Buts", f"{df['Buts_Pour'].sum()} marqués / {df['Buts_Contre'].sum()} encaissés", indent=5)
+    print_kv("Différence", f"{df['Buts_Pour'].sum() - df['Buts_Contre'].sum():+d}", indent=5)
+    if hidden_cl:
+        print_kv("LDC masqués", f"{hidden_cl} matchs (avant quarts de finale)", indent=5)
 
-    # Par compétition
     print(f"\n     Par compétition :")
     for comp, group in df.groupby("Competition"):
         comp_wins = (group["Resultat"] == "W").sum()
-        print(f"       • {comp}: {len(group)} matchs ({comp_wins}V / {len(group) - comp_wins})")
+        print(f"       • {comp}: {len(group)} matchs ({comp_wins}V)")
 
-    # Par venue (domicile/extérieur)
     if "Venue" in df.columns:
         print(f"\n     Par lieu :")
         for venue, group in df.groupby("Venue"):
@@ -415,18 +441,27 @@ def print_team_summary(df: pd.DataFrame, team_name: str):
             label = "🏠 Domicile" if venue == "Home" else "✈️  Extérieur"
             print(f"       • {label}: {len(group)} matchs ({v_wins}V)")
 
-    # Derniers matchs
-    print(f"\n     5 derniers matchs :")
-    for _, row in df.tail(5).iterrows():
-        date_str = row["Date"].strftime("%Y-%m-%d") if hasattr(row["Date"], "strftime") else str(row["Date"])[:10]
-        opponent = row.get("Opponent", "?")
-        venue_icon = "🏠" if row.get("Venue") == "Home" else "✈️"
-        score = f"{row['Buts_Pour']}-{row['Buts_Contre']}"
-        result_icon = {"W": "✅", "D": "🟡", "L": "❌"}.get(row["Resultat"], "?")
-        print(
-            f"       {result_icon} {date_str} | {row['Competition']:20s} | "
-            f"vs {opponent:25s} | {score} {venue_icon}"
-        )
+    display_df = _matches_for_display(df)
+    print(f"\n     5 derniers matchs (hors LDC avant quarts) :")
+    if display_df.empty:
+        print("       (aucun)")
+    else:
+        for _, row in display_df.sort_values("Date").tail(5).iterrows():
+            date_str = format_date(row["Date"])
+            opponent = row.get("Opponent", "?")
+            venue_icon = "🏠" if row.get("Venue") == "Home" else "✈️"
+            score = f"{row['Buts_Pour']}-{row['Buts_Contre']}"
+            result_icon = {"W": "✅", "D": "🟡", "L": "❌"}.get(row["Resultat"], "?")
+            comp_short = str(row["Competition"])[:18]
+            print(
+                f"       {result_icon} {date_str} | {comp_short:<18} | "
+                f"vs {opponent[:25]:<25} | {score} {venue_icon}"
+            )
+
+    cl_ko = filter_cl_from_quarters(df)
+    if not cl_ko.empty:
+        print(f"\n     🏆 LDC — Quarts de finale → finale ({len(cl_ko)} matchs) :")
+        print_cl_knockout_table(cl_ko, team_perspective=True, indent=7)
 
 
 def print_h2h_summary(df: pd.DataFrame, team1: str, team2: str):
@@ -445,12 +480,13 @@ def print_h2h_summary(df: pd.DataFrame, team1: str, team2: str):
     print(f"     • Buts {team1} : {df['GF_Team1'].sum()} | Buts {team2} : {df['GA_Team1'].sum()}")
 
     print(f"\n     Détail :")
-    for _, row in df.iterrows():
-        date_str = row["Date"].strftime("%Y-%m-%d") if hasattr(row["Date"], "strftime") else str(row["Date"])[:10]
+    for _, row in df.sort_values("Date").iterrows():
+        date_str = format_date(row["Date"])
         result_icon = {"W": "✅", "D": "🟡", "L": "❌"}.get(row["Result_Team1"], "?")
+        score = f"{int(row['Home_Goals'])}-{int(row['Away_Goals'])}"
         print(
-            f"       {result_icon} {date_str} | {row['Home']} {row['Home_Goals']}-{row['Away_Goals']} {row['Away']} "
-            f"| {row['Competition']}"
+            f"       {result_icon} {date_str} | {row['Home'][:20]:<20} "
+            f"{score:>5} {row['Away'][:20]:<20} | {row['Competition']}"
         )
 
 
@@ -473,12 +509,11 @@ def save_data(df: pd.DataFrame, filename: str) -> bool:
 # ══════════════════════════════════════════════════════════════
 if __name__ == "__main__":
 
-    print("\n" + "=" * 70)
-    print("  🏆 COLLECTE DONNÉES RÉELLES — PSG vs ARSENAL — SAISON " + str(SEASON))
-    print("=" * 70)
-    print(f"  📡 Source : football-data.org API v4")
-    print(f"  📅 Saison : {SEASON}/{SEASON + 1}")
-    print("=" * 70 + "\n")
+    print_header(
+        f"🏆 COLLECTE DONNÉES — PSG vs ARSENAL — {SEASON}/{SEASON + 1}",
+        "Source : football-data.org API v4",
+    )
+    print()
 
     try:
         scraper = FootballDataScraper(API_KEY)
@@ -532,31 +567,19 @@ if __name__ == "__main__":
                             f"{row['GF']}-{row['GA']} ({row['GD']:+d})"
                         )
 
-        # ── Champions League matches ─────────────────────
-        print("\n\n🏆 Champions League — Tous les matchs\n")
+        # ── Champions League (quarts → finale) ───────────
+        print_section("🏆 Champions League — Quarts de finale → finale")
         cl_matches = scraper.get_competition_matches("CL", SEASON)
         if not cl_matches.empty:
             save_data(cl_matches, "cl_all_matches.csv")
-
-            # Filtrer les matchs terminés
-            finished = cl_matches[cl_matches["Status"] == "FINISHED"]
-            print(f"   Total : {len(cl_matches)} matchs ({len(finished)} terminés)")
-
-            # Matchs à élimination directe
-            knockout = cl_matches[cl_matches["Stage"] != "GROUP_STAGE"]
-            if not knockout.empty:
-                print(f"\n  🔥 Phase finale CL ({len(knockout)} matchs) :")
-                for _, row in knockout.iterrows():
-                    date_str = row["Date"].strftime("%Y-%m-%d") if hasattr(row["Date"], "strftime") else str(row["Date"])[:10]
-                    if pd.notna(row["Home_Goals"]):
-                        score = f"{int(float(row['Home_Goals']))}-{int(float(row['Away_Goals']))}"
-                    else:
-                        score = "à venir"
-                    stage_short = row["Stage"].replace("_", " ").title()
-                    print(
-                        f"     {date_str} | {stage_short:20s} | "
-                        f"{row['Home']:25s} {score:>5s} {row['Away']}"
-                    )
+            hidden = len(cl_matches) - len(filter_cl_from_quarters(cl_matches))
+            knockout = filter_cl_from_quarters(cl_matches)
+            finished = knockout[knockout["Status"] == "FINISHED"] if "Status" in knockout.columns else knockout
+            print_kv("Affichés", f"{len(knockout)} matchs ({len(finished)} terminés)")
+            if hidden:
+                print_kv("Non affichés", f"{hidden} matchs (ligue, barrages, 8es)")
+            print()
+            print_cl_knockout_table(knockout)
 
         # ── Blessures et Suspensions ─────────────────────
         print("\n\n🚑 Blessures et Suspensions\n")
@@ -573,21 +596,14 @@ if __name__ == "__main__":
             for p in data["players"]:
                 print(f"     • {p['name']} ({p['type']}) - Importance: {p['importance']}/5")
 
-        # ── Résumé final ─────────────────────────────────
-        print("\n" + "=" * 70)
-        print("  ✅ DONNÉES RÉELLES COLLECTÉES")
+        print_footer("✅ DONNÉES RÉELLES COLLECTÉES")
         print(f"  📁 Dossier : {OUTPUT_DIR}")
-        print("=" * 70)
-
-        # Lister les fichiers générés
         csv_files = [f for f in os.listdir(OUTPUT_DIR) if f.endswith(".csv")]
-        print(f"\n  📄 Fichiers générés ({len(csv_files)}) :")
+        print(f"  📄 Fichiers ({len(csv_files)}) :")
         for f in sorted(csv_files):
             size = os.path.getsize(os.path.join(OUTPUT_DIR, f))
-            print(f"     • {f} ({size:,} bytes)")
-
-        print("\n  ➡️  Prochaine étape : python features.py")
-        print("=" * 70 + "\n")
+            print(f"     • {f} ({size:,} octets)")
+        print("\n  ➡️  Prochaine étape : python src/features.py\n")
 
     except ValueError as e:
         print(f"\n{e}")

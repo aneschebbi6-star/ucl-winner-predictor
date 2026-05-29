@@ -2,6 +2,19 @@ import pandas as pd
 import numpy as np
 import os
 
+from console import (
+    configure_console,
+    count_hidden_cl_matches,
+    filter_cl_from_quarters,
+    print_cl_knockout_table,
+    print_footer,
+    print_header,
+    print_kv,
+    print_section,
+)
+
+configure_console()
+
 def prepare_dataset(matches_df: pd.DataFrame, split_date: str = '2025-08-01') -> tuple:
     """
     Étape 4 : Choix de la Cible (Target Definition) & Split Temporel
@@ -13,9 +26,8 @@ def prepare_dataset(matches_df: pd.DataFrame, split_date: str = '2025-08-01') ->
     Retourne:
     - train_df, test_df
     """
-    print("\n" + "="*60)
-    print("  Étape 4 : Choix de la Cible & Split Temporel")
-    print("="*60)
+    print_header("Étape 4 : Cible & split temporel")
+    print()
     
     df = matches_df.copy()
     
@@ -31,7 +43,7 @@ def prepare_dataset(matches_df: pd.DataFrame, split_date: str = '2025-08-01') ->
     
     # y = 0 si Home gagne, 1 si Away gagne
     df['y_target'] = np.where(df['Home_Goals'] > df['Away_Goals'], 0, 1)
-    print(f"[+] Variable cible (y_target) créée en binaire : 0 (Home gagne), 1 (Away gagne)")
+    print_kv("Cible y_target", "0 = domicile gagne, 1 = extérieur gagne")
     
     # 2. Time-Based Split : Séparer chronologiquement
     df = df.sort_values(by='Date').reset_index(drop=True)
@@ -39,9 +51,16 @@ def prepare_dataset(matches_df: pd.DataFrame, split_date: str = '2025-08-01') ->
     train_df = df[df['Date'] < split_date].copy()
     test_df = df[df['Date'] >= split_date].copy()
     
-    print(f"[+] Time-Based Split appliqué avec la date charnière : {split_date}")
-    print(f"    -> Train set (Saisons précédentes) : {len(train_df)} matchs")
-    print(f"    -> Test set (Saison récente)       : {len(test_df)} matchs")
+    print_kv("Date de coupure", split_date)
+    print_kv("Train", f"{len(train_df)} matchs")
+    print_kv("Test", f"{len(test_df)} matchs")
+    hidden = count_hidden_cl_matches(test_df)
+    if hidden:
+        print_kv("LDC masqués (test)", f"{hidden} matchs avant quarts de finale")
+    cl_test = filter_cl_from_quarters(test_df)
+    if not cl_test.empty:
+        print_section("LDC dans le jeu de test (quarts → finale)")
+        print_cl_knockout_table(cl_test, team_perspective=True)
     
     return train_df, test_df
 
@@ -58,6 +77,6 @@ if __name__ == "__main__":
         os.makedirs("data/processed", exist_ok=True)
         train.to_csv("data/processed/train_dataset.csv", index=False)
         test.to_csv("data/processed/test_dataset.csv", index=False)
-        print("\n[+] Datasets sauvegardés dans data/processed/ (train_dataset.csv, test_dataset.csv)")
+        print_footer("Datasets sauvegardés → data/processed/")
     else:
-        print("Fichier de données non trouvé pour le test.")
+        print("  ❌ Fichier de données non trouvé. Lancez src/scrapper.py d'abord.")

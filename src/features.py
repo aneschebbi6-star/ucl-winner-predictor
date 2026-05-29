@@ -17,7 +17,9 @@ from dotenv import load_dotenv
 from datetime import datetime
 import sys
 
-sys.stdout.reconfigure(encoding='utf-8')
+from console import configure_console, print_footer, print_header, print_section
+
+configure_console()
 load_dotenv()
 
 INPUT_DIR = os.getenv("OUTPUT_DIR", "data/raw")
@@ -85,9 +87,8 @@ def build_team_features(team_name: str, matches_df: pd.DataFrame, injuries_data:
 
 
 if __name__ == "__main__":
-    print("\n" + "=" * 70)
-    print("  📊 FEATURE ENGINEERING — PSG vs ARSENAL")
-    print("=" * 70 + "\n")
+    print_header("📊 FEATURE ENGINEERING — PSG vs ARSENAL")
+    print()
 
     try:
         psg_df = pd.read_csv(os.path.join(INPUT_DIR, "psg_matches.csv"), parse_dates=["Date"])
@@ -108,15 +109,13 @@ if __name__ == "__main__":
     psg_features = build_team_features("PSG", psg_df, injuries_data)
     arsenal_features = build_team_features("Arsenal", arsenal_df, injuries_data)
 
-    print("\n  " + "═" * 50)
-    print(f"  {'FEATURE':25s} {'PSG':>10s} {'ARSENAL':>10s}")
-    print("  " + "═" * 50)
-    
+    print_section("Comparaison des features")
+    print(f"  {'FEATURE':<25} {'PSG':>10} {'ARSENAL':>10}")
+    print(f"  {'-' * 25} {'-' * 10} {'-' * 10}")
     for key in [k for k in psg_features.keys() if k != "team"]:
         p_val = f"{psg_features[key]:.3f}" if isinstance(psg_features[key], float) else str(psg_features[key])
         a_val = f"{arsenal_features[key]:.3f}" if isinstance(arsenal_features[key], float) else str(arsenal_features[key])
-        print(f"  {key:25s} {p_val:>10s} {a_val:>10s}")
-    print("  " + "═" * 50)
+        print(f"  {key:<25} {p_val:>10} {a_val:>10}")
 
     features_json = {
         "PSG": psg_features,
@@ -125,4 +124,4 @@ if __name__ == "__main__":
     }
     with open(os.path.join(PROCESSED_DIR, "team_features.json"), "w", encoding="utf-8") as f:
         json.dump(features_json, f, indent=2, ensure_ascii=False)
-    print(f"\n  💾 Features sauvegardées dans {PROCESSED_DIR}/team_features.json\n")
+    print_footer(f"💾 Features sauvegardées → {PROCESSED_DIR}/team_features.json")
