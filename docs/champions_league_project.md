@@ -7,20 +7,34 @@ Ce document sert de feuille de route (Roadmap) pour concevoir, entraîner et dé
 ## 📌 Architecture Générale du Projet
 
 ```
-📂 cl-final-prediction
-├── 📂 data
-│   ├── 📂 raw            # Données brutes (Scraping / API)
-│   └── 📂 processed      # Données nettoyées et features calculées
-├── 📂 notebooks          # Notebooks d'exploration et de prototypage
-├── 📂 src
-│   ├── __init__.py
-│   ├── scraper.py        # Récupération des données (FBref, API-Football)
-│   ├── features.py       # Feature Engineering (Forme, xG, H2H)
-│   ├── train.py          # Entraînement du modèle et validation
-│   └── predict.py        # Inférence / Prédiction sur le match final
-├── README.md
-└── requirements.txt
+champions-predection/
+├── data/
+│   ├── raw/                           # CSV bruts (scraper)
+│   │   ├── psg_matches.csv
+│   │   ├── arsenal_matches.csv
+│   │   ├── psg_arsenal_combined.csv
+│   │   ├── cl_all_matches.csv
+│   │   ├── fl1_standings.csv
+│   │   └── pl_standings.csv
+│   └── processed/                     # Datasets et features JSON
+│       ├── injuries_impact.json
+│       ├── team_features.json
+│       ├── train_dataset.csv
+│       └── test_dataset.csv
+├── docs/
+│   └── champions_league_project.md    # Feuille de route détaillée
+├── src/
+│   ├── scrapper.py                    # Étape 1 : collecte API + blessures
+│   ├── features.py                    # Étape 2 : feature engineering
+│   ├── dataset.py                     # Étape 3 : cible + split temporel
+│   ├── model.py                       # Étape 4 : entraînement & évaluation
+│   ├── predict.py                     # Étape 5 : prédiction finale
+│   └── console.py                     # Affichage terminal homogène
+├── requirements.txt                   # Dépendances Python
+├── .env                               # Variables d'environnement
+└── README.md                          # Vous êtes ici
 ```
+
 
 ---
 

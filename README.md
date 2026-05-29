@@ -1,244 +1,252 @@
-# Champions League - Prédiction Finale (PSG vs Arsenal)
+# UEFA Champions League Final Predictor
 
-Pipeline Python de collecte de données, feature engineering et modèles de classification pour estimer l'issue de la **finale de Ligue des Champions** (saison 2025/2026 : Paris Saint-Germain vs Arsenal).
+Projet Python de prediction football pour la finale UEFA Champions League **PSG vs Arsenal**.  
+Le pipeline est organise pour un usage portfolio Data Science/ML : features anti-leakage, split chronologique, calibration des probabilites, artefacts sauvegardes et tests automatises.
 
-Les données proviennent de [football-data.org](https://www.football-data.org/) (API v4, plan gratuit). Les blessures sont enrichies via Transfermarkt (scraping).
+> Projet educatif uniquement. Les sorties ne sont pas un conseil de pari.
 
----
+## Objectif
 
-## Fonctionnalités
+Predire le resultat 1N2 depuis la perspective de l'equipe analysee :
 
-- ✅ Collecte des matchs PSG / Arsenal (LDC + championnats domestiques)
-- ✅ Confrontations directes, classements L1 / Premier League, tous les matchs LDC
-- ✅ Features : forme pondérée, moyennes de buts, taux de victoire, clean sheets, impact blessures
-- ✅ Split temporel train / test et variable cible binaire (victoire domicile vs extérieur)
-- ✅ Modèles : régression logistique, Random Forest, XGBoost (GridSearchCV)
-- ✅ Inférence finale + comparaison simplifiée avec cotes bookmakers (value bet)
-- ✅ Affichage terminal optimisé avec gestion UTF-8
+| Classe | Signification si `Team = PSG` |
+|---|---|
+| `0` | PSG gagne |
+| `1` | Match nul |
+| `2` | PSG perd / Arsenal gagne |
 
----
+La prediction finale charge un modele deja entraine. Elle ne re-entraine pas sur le jeu de test.
 
-## Structure du projet
+## Architecture
 
+```text
+champions predection/
+|-- config.yaml
+|-- data/
+|   |-- raw/
+|   |   |-- psg_arsenal_combined.csv
+|   |   |-- psg_matches.csv
+|   |   |-- arsenal_matches.csv
+|   |   |-- cl_all_matches.csv
+|   |-- processed/
+|       |-- model_dataset.csv
+|       |-- train_dataset.csv
+|       |-- test_dataset.csv
+|       |-- team_features.json
+|       |-- injuries_impact.json
+|-- artifacts/
+|   |-- model.joblib
+|   |-- metrics.joblib
+|   |-- calibration_table.csv
+|-- src/
+|   |-- dataset.py
+|   |-- model.py
+|   |-- predict.py
+|   |-- scrapper.py
+|   |-- console.py
+|   |-- config.py
+|   |-- data/
+|   |-- features/
+|   |-- models/
+|   |-- evaluation/
+|-- tests/
+|   |-- test_feature_pipeline.py
+|-- requirements.txt
 ```
-champions-predection/
-├── data/
-│   ├── raw/                           # CSV bruts (scraper)
-│   │   ├── psg_matches.csv
-│   │   ├── arsenal_matches.csv
-│   │   ├── psg_arsenal_combined.csv
-│   │   ├── cl_all_matches.csv
-│   │   ├── fl1_standings.csv
-│   │   └── pl_standings.csv
-│   └── processed/                     # Datasets et features JSON
-│       ├── injuries_impact.json
-│       ├── team_features.json
-│       ├── train_dataset.csv
-│       └── test_dataset.csv
-├── docs/
-│   └── champions_league_project.md    # Feuille de route détaillée
-├── src/
-│   ├── scrapper.py                    # Étape 1 : collecte API + blessures
-│   ├── features.py                    # Étape 2 : feature engineering
-│   ├── dataset.py                     # Étape 3 : cible + split temporel
-│   ├── model.py                       # Étape 4 : entraînement & évaluation
-│   ├── predict.py                     # Étape 5 : prédiction finale
-│   └── console.py                     # Affichage terminal homogène
-├── requirements.txt                   # Dépendances Python
-├── .env                               # Variables d'environnement
-└── README.md                          # Vous êtes ici
-```
-
----
-
-## Prérequis
-
-- **Python 3.10+**
-- Compte gratuit sur [football-data.org](https://www.football-data.org/client/register) (clé API)
-- Connexion internet (pour API et scraping Transfermarkt)
-
----
 
 ## Installation
 
-### 1. Cloner le repository
+Depuis PowerShell :
 
-```bash
-git clone https://github.com/aneschebbi6-star/ucl-winner-predictor.git
-cd "champions predection"
+```powershell
+cd "E:\frrelance\champions predection"
+python -m pip install -r requirements.txt
 ```
 
-### 2. Créer un environnement virtuel
+Si Windows ne reconnait pas `python`, utilise :
 
-```bash
-python -m venv .venv
-
-# Windows
-.venv\Scripts\activate
-
-# macOS / Linux
-source .venv/bin/activate
+```powershell
+& C:\Users\ANES\AppData\Local\Microsoft\WindowsApps\python3.11.exe -m pip install -r requirements.txt
 ```
 
-### 3. Installer les dépendances
+## Execution
 
-```bash
-pip install -r requirements.txt
-```
+Ordre recommande :
 
-### 4. Configurer les variables d'environnement
-
-Créez un fichier `.env` à la racine du projet :
-
-```env
-FOOTBALL_API_KEY=votre_cle_api
-SEASON=2025
-OUTPUT_DIR=data/raw
-PSG_TEAM_ID=524
-ARSENAL_TEAM_ID=57
-```
-
-| Variable | Description | Exemple |
-|----------|-------------|---------|
-| `FOOTBALL_API_KEY` | Clé API football-data.org (obligatoire) | `abc123def456` |
-| `SEASON` | Année de début de saison (2025 = 2025/2026) | `2025` |
-| `OUTPUT_DIR` | Dossier de sortie des CSV bruts | `data/raw` |
-| `PSG_TEAM_ID` | ID PSG sur football-data.org | `524` |
-| `ARSENAL_TEAM_ID` | ID Arsenal sur football-data.org | `57` |
-
----
-
-## Utilisation (Pipeline complet)
-
-Exécutez les scripts **depuis la racine du projet** :
-
-```bash
-# 1. Collecte des données (API + blessures Transfermarkt)
-python src/scrapper.py
-
-# 2. Calcul des features équipe (forme, buts, clean sheets, etc.)
-python src/features.py
-
-# 3. Préparation datasets train / test avec split temporel
+```powershell
 python src/dataset.py
-
-# 4. Entraînement des modèles et métriques de performance
 python src/model.py
-
-# 5. Prédiction finale + analyse value bet
 python src/predict.py
 ```
 
-### Affichage terminal
+Avec ton Python WindowsApps :
 
-Tous les scripts partagent le module `src/console.py` pour une cohérence visuelle :
+```powershell
+& C:\Users\ANES\AppData\Local\Microsoft\WindowsApps\python3.11.exe src/dataset.py
+& C:\Users\ANES\AppData\Local\Microsoft\WindowsApps\python3.11.exe src/model.py
+& C:\Users\ANES\AppData\Local\Microsoft\WindowsApps\python3.11.exe src/predict.py
+```
 
-- ✅ En-têtes et tableaux alignés
-- ✅ Encodage UTF-8 (accents, symboles) sous Windows
-- ✅ **LDC** : seuls les matchs depuis les **quarts de finale** sont listés (`QUARTER_FINALS`, `SEMI_FINALS`, `FINAL`)
-  - Les phases de ligue, barrages et 8es ne s'affichent pas (mais les CSV complets restent dans `data/raw/`)
+## Role des scripts
 
----
+| Script | Role |
+|---|---|
+| `src/scrapper.py` | Collecte les donnees brutes via football-data.org et sources externes. |
+| `src/dataset.py` | Construit le dataset ML avec features pre-match et split chronologique. |
+| `src/model.py` | Entraine les modeles, calibre les probabilites et sauvegarde les artefacts. |
+| `src/predict.py` | Charge `artifacts/model.joblib` et predit PSG vs Arsenal. |
 
-## Fichiers générés
+## Features
 
-### `data/raw/` (après scrapper.py)
+Les features sont calculees strictement avant match avec `shift()` pour reduire le data leakage.
 
-| Fichier | Contenu |
-|---------|---------|
-| `psg_matches.csv` | Historique des matchs PSG |
-| `arsenal_matches.csv` | Historique des matchs Arsenal |
-| `psg_arsenal_combined.csv` | Fusion des effectifs |
-| `cl_all_matches.csv` | Tous les matchs LDC de la saison |
-| `fl1_standings.csv` | Classement Ligue 1 |
-| `pl_standings.csv` | Classement Premier League |
+Features principales :
 
-### `data/processed/` (après features.py et dataset.py)
+```text
+elo_diff
+form_diff
+xg_diff
+attack_diff
+defense_diff
+injuries_diff
+possession_diff
+ucl_experience_diff
+bookmaker_prob_diff
+rest_days_diff
+h2h_win_rate_diff
+h2h_draw_rate
+```
 
-| Fichier | Contenu |
-|---------|---------|
-| `injuries_impact.json` | Blessures/suspensions + score d'impact |
-| `team_features.json` | Features PSG vs Arsenal (forme, buts, etc.) |
-| `train_dataset.csv` | Jeu d'entraînement (avant 2026-01-01) |
-| `test_dataset.csv` | Jeu de test (après 2026-01-01) |
+Par defaut, les colonnes `Team`, `Opponent` et `Stage` ne sont pas utilisees comme features pour limiter la memorisation.
 
----
+## Modeles
 
-## Modèle & Cible
+Le training compare :
 
-### Variable cible
+| Modele | Pourquoi |
+|---|---|
+| Logistic Regression calibree | Simple, stable sur petit dataset, probabilites plus prudentes. |
+| XGBoost shallow regularise | Modele non lineaire limite pour eviter l'overfitting. |
+| Elo baseline | Baseline football interpretable. |
 
-- **`y_target = 0`** : l'équipe à domicile gagne
-- **`y_target = 1`** : l'équipe à l'extérieur gagne
-- **Matchs nuls** : exclus du jeu de données
+Les artefacts generes :
 
-### Split temporel
+```text
+artifacts/model.joblib
+artifacts/metrics.joblib
+artifacts/calibration_table.csv
+```
 
-La séparation train/test suit une **coupure chronologique** (par défaut `2026-01-01`). Cela garantit :
-- Pas de fuite de données temporelle
-- Test sur des matchs "futurs" par rapport au train
-- Réalisme : prédiction sur une vraie finale
+## Metriques
 
-### Prédiction finale
+Le projet affiche :
 
-- **Vecteur fictif LDC FINAL** : PSG considéré comme "domicile" administratif
-- **Probas via XGBoost** : entraîné sur train + test combinés
-- **Cotes bookmakers** : démo (non scrapées en temps réel)
+```text
+Accuracy
+LogLoss
+Brier Score
+TimeSeriesSplit CV LogLoss
+```
 
----
+La calibration table est exportee dans :
 
-## Stack technique
+```text
+artifacts/calibration_table.csv
+```
 
-| Domaine | Bibliothèques |
-|---------|----------------|
-| **Données** | `pandas`, `numpy` |
-| **API / Env** | `requests`, `python-dotenv` |
-| **Machine Learning** | `scikit-learn`, `xgboost` |
-| **Scraping** | `requests` + parsing HTML (Transfermarkt) |
-| **Visualisation** | `terminal` natif (console.py) |
+## Tests
 
----
+Lancer les tests :
 
-## Limites & Avertissement ⚠️
+```powershell
+python -m pytest -q
+```
 
-1. **Débit API** : Le plan gratuit de football-data.org limite les requêtes (~10/min). Le scraper applique une pause entre appels.
+Tests inclus :
 
-2. **Volume de données** : Les performances du modèle dépendent fortement du volume d'historique disponible pour PSG et Arsenal.
+| Test | Ce qu'il verifie |
+|---|---|
+| Target mapping | `0/1/2` correspond bien a `Team gagne / nul / Team perd`. |
+| No leakage | Les colonnes interdites ne sont pas dans les features. |
+| Shift correctness | Les moyennes utilisent seulement les matchs precedents. |
+| Feature alignment | Les features d'entrainement et de prediction sont coherentes. |
+| Final vector consistency | Le vecteur PSG vs Arsenal est complet et aligne. |
 
-3. **Pas un conseil de pari** : Ce projet est à titre **éducatif/personnel**. N'utilisez pas les prédictions comme base de décision financière.
+## Configuration
 
-4. **Données réelles** : Les cotes bookmakers affichées dans `predict.py` sont démo. Pour une vraie analyse, il faudrait scraper en temps réel.
+Les parametres principaux sont dans `config.yaml` :
 
-5. **Blessures** : Le scraping Transfermarkt est basé sur le parsing HTML ; format peut changer.
+```yaml
+project:
+  random_state: 42
 
----
+data:
+  split_date: "2026-01-01"
 
-## Vision long terme
+features:
+  use_identity_features: false
 
-Pour la roadmap détaillée, les notebooks d'exploration, analyses xG et améliorations futures, consultez :
-👉 [`docs/champions_league_project.md`](docs/champions_league_project.md)
+model:
+  selected_model: logistic_calibrated
+```
 
----
+Les cotes bookmaker de demonstration sont aussi configurees dans `config.yaml`, puis normalisees sans marge avant comparaison.
 
-## Contribution
+## Limites
 
-Les contributions sont bienvenues ! Signalez les bugs ou proposez des améliorations via issues/PRs sur le repository GitHub.
+Le projet est maintenant structure proprement, mais la qualite finale depend encore des donnees disponibles :
 
----
+- historique actuel encore limite ;
+- xG et possession mis a zero si aucune source n'est fournie ;
+- blessures encore agregees, pas parfaitement datees ;
+- cotes bookmaker dans `config.yaml`, pas scrappees en temps reel ;
+- backtesting anciennes finales possible seulement avec historique multi-saisons.
+
+## Sortie attendue
+
+`python src/predict.py` affiche :
+
+```text
+Match
+Key feature checks
+Prediction calibree
+Bookmakers sans marge
+Modele vs marche
+Controle qualite
+Controle
+```
+
+Exemple de prediction recente :
+
+```text
+PSG gagne       50.27%
+Match nul       21.26%
+Arsenal gagne   28.46%
+```
+
+La section `Modele vs marche` compare la probabilite du modele avec la probabilite bookmaker normalisee sans marge :
+
+```text
+Outcome        Model    Market   Edge
+PSG gagne      50.27%   41.57%   +8.70 pp
+Match nul      21.26%   26.90%   -5.64 pp
+Arsenal gagne  28.46%   31.53%   -3.07 pp
+```
+
+La section `Controle qualite` signale les limites de donnees :
+
+```text
+Model artifact              [OK]
+Final venue neutral         [OK]
+Feature alignment           [OK]
+Probabilities sum           [OK]
+xG data available           [WARN] - neutral fallback used
+Possession data available   [WARN] - neutral fallback used
+H2H history available       [WARN] - neutral fallback used
+```
+
+Ces avertissements ne bloquent pas la prediction. Ils indiquent simplement que le modele utilise une valeur neutre parce que la source de donnees correspondante n'est pas encore disponible.
 
 ## Licence
 
-**Usage éducatif / personnel uniquement.**
-
-Respectez les conditions d'utilisation de :
-- [football-data.org](https://www.football-data.org/)
-- [Transfermarkt](https://www.transfermarkt.com/)
-
----
-
-## Contact
-
-Pour toute question ou remarque :
-📧 aneschebbi6.star@gmail.com
-
-**Bonne chance pour la finale ! ⚽🏆**
+Usage educatif / personnel uniquement. Respecte les conditions d'utilisation de football-data.org, Transfermarkt et toute source externe ajoutee.

@@ -1,0 +1,62 @@
+project:
+  name: champions-league-final-predictor
+  random_state: 42
+
+data:
+  raw_matches_path: data/raw/psg_arsenal_combined.csv
+  team_features_path: data/processed/team_features.json
+  injuries_path: data/processed/injuries_impact.json
+  train_path: data/processed/train_dataset.csv
+  test_path: data/processed/test_dataset.csv
+  processed_dataset_path: data/processed/model_dataset.csv
+  split_date: "2026-01-01"
+
+final_match:
+  date: "2026-05-30"
+  competition: Champions League
+  stage: FINAL
+  team: Paris Saint-Germain FC
+  opponent: Arsenal FC
+  venue: Neutral
+  bookmaker_odds:
+    team: 2.20
+    draw: 3.40
+    opponent: 2.90
+
+features:
+  rolling_windows: [5, 10]
+  use_identity_features: false
+  allowed_categorical:
+    - Competition
+    - Venue
+  leakage_columns:
+    - Home_Goals
+    - Away_Goals
+    - Buts_Pour
+    - Buts_Contre
+    - Resultat
+    - y_target
+    - target_label
+    - Date
+    - Home
+    - Away
+    - Team
+    - Opponent
+    - Stage
+
+model:
+  artifact_dir: artifacts
+  selected_model: logistic_calibrated
+  calibration_cv_splits: 3
+  timeseries_cv_splits: 3
+  logistic:
+    C: 0.5
+    max_iter: 1000
+  xgboost:
+    n_estimators: 50
+    max_depth: 2
+    learning_rate: 0.03
+    subsample: 0.8
+    colsample_bytree: 0.8
+    reg_lambda: 5.0
+    reg_alpha: 1.0

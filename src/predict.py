@@ -1,175 +1,181 @@
-import os
+from __future__ import annotations
+
 import sys
 
-import pandas as pd
+import numpy as np
 
-from console import configure_console, print_footer, print_header, print_kv, print_section
+from config import load_config, resolve_path
+from console import (
+    configure_console,
+    print_footer,
+    print_header,
+    print_kv,
+    print_probability_table,
+    print_section,
+    print_status,
+    print_table,
+)
+from data.loaders import load_json, load_matches
+from evaluation.metrics import bookmaker_probabilities_without_margin
+from features.pipeline import TARGET_LABELS, build_final_vector
+from models.train import load_artifact
 
-configure_console()
 
-from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
-
-try:
-    from xgboost import XGBClassifier
-except ImportError:
-    print("XGBoost non installe. Installez-le avec `pip install xgboost`.")
-    sys.exit(1)
-
-
-RESULT_LABELS = {
-    0: "Victoire PSG",
+DISPLAY_LABELS = {
+    0: "PSG gagne",
     1: "Match nul",
-    2: "Victoire Arsenal",
+    2: "Arsenal gagne",
 }
 
 
-def load_all_data():
-    train_path = os.path.join("data", "processed", "train_dataset.csv")
-    test_path = os.path.join("data", "processed", "test_dataset.csv")
+def pct(value: float) -> str:
+    return f"{value * 100:6.2f}%"
 
-    if not os.path.exists(train_path) or not os.path.exists(test_path):
-        print("Fichiers de donnees introuvables. Lancez src/dataset.py d'abord.")
+
+def signed_pp(value: float) -> str:
+    sign = "+" if value >= 0 else ""
+    return f"{sign}{value * 100:.2f} pp"
+
+
+def confidence_label(probabilities: np.ndarray) -> str:
+    top_two = np.sort(probabilities)[-2:]
+    leader = float(top_two[-1])
+    margin = float(top_two[-1] - top_two[-2])
+    if leader >= 0.75:
+        return "High but verify calibration"
+    if margin < 0.08:
+        return "Low - close market"
+    if leader < 0.55:
+        return "Moderate"
+    return "Medium"
+
+
+def final_value(frame, column: str, default: float = 0.0) -> float:
+    if column not in frame.columns:
+        return default
+    return float(frame[column].iloc[0])
+
+
+def main() -> None:
+    configure_console()
+    config = load_config()
+    print_header("Prediction finale PSG vs Arsenal")
+
+    artifact_path = resolve_path(config["model"]["artifact_dir"]) / "model.joblib"
+    if not artifact_path.exists():
+        print("Modele introuvable. Lance d'abord: python src/model.py")
         sys.exit(1)
 
-    train_df = pd.read_csv(train_path)
-    test_df = pd.read_csv(test_path)
-    return pd.concat([train_df, test_df], ignore_index=True)
+    artifact = load_artifact(artifact_path)
+    raw = load_matches(config["data"]["raw_matches_path"])
+    injuries = load_json(config["data"]["injuries_path"], default={})
+    final_vector = build_final_vector(raw, artifact["config"], injuries)
+    feature_columns = artifact["feature_columns"]
+    X_final = final_vector[feature_columns]
 
+    probabilities = artifact["model"].predict_proba(X_final)[0]
+    by_class = dict(zip(artifact["model"].classes_, probabilities))
+    ordered = np.array([by_class.get(label, 0.0) for label in [0, 1, 2]])
+    predicted_class = int(np.argmax(ordered))
 
-def train_final_model(df):
-    drop_cols = [
-        "Date",
-        "Home",
-        "Away",
-        "Home_Goals",
-        "Away_Goals",
-        "Buts_Pour",
-        "Buts_Contre",
-        "Resultat",
-        "Comp_Code",
-        "Group",
+    odds = config["final_match"]["bookmaker_odds"]
+    bookmaker = bookmaker_probabilities_without_margin(odds)
+
+    print_section("Match")
+    print_table(
+        ["Team", "Opponent", "Competition", "Venue"],
+        [[config["final_match"]["team"], config["final_match"]["opponent"], config["final_match"]["competition"], X_final["Venue"].iloc[0]]],
+    )
+
+    print_section("Key feature checks")
+    key_features = [
+        "elo_diff",
+        "form_diff",
+        "attack_diff",
+        "defense_diff",
+        "injuries_diff",
+        "ucl_experience_diff",
+        "bookmaker_prob_diff",
+        "rest_days_diff",
     ]
-
-    X = df.drop(columns=drop_cols + ["y_target"], errors="ignore")
-    y = df["y_target"]
-
-    categorical_cols = ["Competition", "Team", "Opponent", "Venue", "Stage"]
-    numeric_cols = ["Matchday"]
-
-    categorical_cols = [c for c in categorical_cols if c in X.columns]
-    numeric_cols = [c for c in numeric_cols if c in X.columns]
-
-    X[categorical_cols] = X[categorical_cols].fillna("Missing").astype(str)
-    X[numeric_cols] = X[numeric_cols].fillna(0)
-
-    preprocessor = ColumnTransformer(
-        transformers=[
-            ("num", StandardScaler(), numeric_cols),
-            ("cat", OneHotEncoder(handle_unknown="ignore", sparse_output=False), categorical_cols),
-        ]
+    print_table(
+        ["Feature", "Value"],
+        [[feature, f"{float(X_final[feature].iloc[0]):.4f}"] for feature in key_features if feature in X_final.columns],
     )
 
-    xgb_pipeline = Pipeline(
-        steps=[
-            ("preprocessor", preprocessor),
-            (
-                "classifier",
-                XGBClassifier(
-                    use_label_encoder=False,
-                    eval_metric="mlogloss",
-                    random_state=42,
-                    learning_rate=0.1,
-                    max_depth=3,
-                    n_estimators=50,
-                ),
-            ),
-        ]
-    )
+    print_section("Prediction calibree")
+    print_kv("Resultat predit", DISPLAY_LABELS[predicted_class])
+    print_probability_table([(DISPLAY_LABELS[class_id], ordered[class_id]) for class_id in [0, 1, 2]])
 
-    xgb_pipeline.fit(X, y)
-    return xgb_pipeline
-
-
-def get_probability(probability_by_class: dict, class_id: int) -> float:
-    return probability_by_class.get(class_id, 0.0)
-
-
-def main():
-    print_header("Etape 6 : Simulation et inference (finale)")
-    print()
-
-    df = load_all_data()
-    model = train_final_model(df)
-
-    final_match = pd.DataFrame(
+    print_section("Bookmakers sans marge")
+    print_probability_table(
         [
-            {
-                "Competition": "Champions League",
-                "Team": "Paris Saint-Germain FC",
-                "Opponent": "Arsenal FC",
-                "Venue": "Neutral",
-                "Stage": "FINAL",
-                "Matchday": 1,
-            }
+            ("PSG", bookmaker["team"]),
+            ("Nul", bookmaker["draw"]),
+            ("Arsenal", bookmaker["opponent"]),
         ]
     )
 
-    print_section("Feature vector - finale")
-    for col in final_match.columns:
-        print_kv(col, str(final_match[col].iloc[0]))
-
-    probabilities = model.predict_proba(final_match)[0]
-    probability_by_class = dict(zip(model.classes_, probabilities))
-
-    psg_prob = get_probability(probability_by_class, 0)
-    draw_prob = get_probability(probability_by_class, 1)
-    arsenal_prob = get_probability(probability_by_class, 2)
-
-    predicted_class = int(model.predict(final_match)[0])
-    predicted_result = RESULT_LABELS.get(predicted_class, f"Classe {predicted_class}")
-
-    print_section("Prediction XGBoost - resultat 1N2")
-    print_kv("Resultat predit", predicted_result)
-    print_kv("PSG gagne", f"{psg_prob * 100:.2f}%")
-    print_kv("Match nul", f"{draw_prob * 100:.2f}%")
-    print_kv("Arsenal gagne", f"{arsenal_prob * 100:.2f}%")
-
-    cotes_bookmakers = {
-        "PSG": 2.20,
-        "Nul": 3.40,
-        "Arsenal": 2.90,
-    }
-
-    implied_probs = {key: (1 / odd) * 100 for key, odd in cotes_bookmakers.items()}
-    model_probs = {
-        "PSG": psg_prob * 100,
-        "Nul": draw_prob * 100,
-        "Arsenal": arsenal_prob * 100,
-    }
-
-    print_section("Bookmakers vs modele")
-    for key in ["PSG", "Nul", "Arsenal"]:
-        print_kv(
-            f"Cote {key}",
-            f"{cotes_bookmakers[key]} (implicite {implied_probs[key]:.2f}%, modele {model_probs[key]:.2f}%)",
+    print_section("Modele vs marche")
+    market_ordered = np.array([bookmaker["team"], bookmaker["draw"], bookmaker["opponent"]])
+    comparison_rows = []
+    for class_id, market_prob in zip([0, 1, 2], market_ordered):
+        model_prob = ordered[class_id]
+        comparison_rows.append(
+            [
+                DISPLAY_LABELS[class_id],
+                pct(model_prob),
+                pct(market_prob),
+                signed_pp(model_prob - market_prob),
+            ]
         )
+    print_table(["Outcome", "Model", "Market", "Edge"], comparison_rows)
 
-    print_section("Analyse value bet")
-    values = {
-        key: model_probs[key] - implied_probs[key]
-        for key in ["PSG", "Nul", "Arsenal"]
+    print_section("Controle qualite")
+    missing_signal_checks = {
+        "xG data available": abs(final_value(X_final, "xg_diff")) > 0,
+        "Possession data available": abs(final_value(X_final, "possession_diff")) > 0,
+        "H2H history available": abs(final_value(X_final, "h2h_win_rate_diff")) > 0
+        or abs(final_value(X_final, "h2h_draw_rate")) > 0,
     }
-    best_pick = max(values, key=values.get)
+    print_status("Model artifact", artifact_path.exists(), str(artifact_path))
+    print_status("Final venue neutral", str(X_final["Venue"].iloc[0]) == "Neutral")
+    print_status("Feature alignment", list(X_final.columns) == feature_columns)
+    print_status("Probabilities sum", abs(float(ordered.sum()) - 1.0) < 1e-6, f"{ordered.sum():.6f}")
+    print_status("Confidence level", True, confidence_label(ordered))
+    for label, ok in missing_signal_checks.items():
+        print_status(label, ok, "neutral fallback used" if not ok else "")
+    if "metrics" in artifact:
+        selected = artifact["config"]["model"].get("selected_model", "unknown")
+        metrics = artifact["metrics"].get(selected, {})
+        if metrics:
+            print_kv("Selected model", selected)
+            print_kv("Holdout LogLoss", f"{metrics.get('log_loss', 0):.4f}")
+            print_kv("Holdout Brier", f"{metrics.get('brier_score', 0):.4f}")
 
-    if values[best_pick] > 0:
-        print(f"  Value sur {best_pick} (+{values[best_pick]:.2f}% vs bookmakers)")
-        print(f"  Recommandation : {best_pick}")
-    else:
-        print("  Pas de value bet claire - cotes alignees avec le modele")
+    print_section("Interpretation (lecture prudente)")
+    max_prob = float(ordered.max())
+    print_kv(
+        "Confiance",
+        "Probas calibrees (sigmoid CV sur train uniquement) — pas de re-fit sur le test.",
+    )
+    if max_prob >= 0.65:
+        print_kv(
+            "Surconfiance",
+            "Classe leader > 65 % : valider sur cotes et contexte jour J avant decision.",
+        )
+    print_kv(
+        "Variance finale UCL",
+        "Match unique a fort alea ; ecarts modele/marche peuvent refleter donnees partielles (xG/H2H).",
+    )
+    print_kv(
+        "Value bet",
+        "Comparer uniquement apres calibration ; bookmakers = reference de marche.",
+    )
+    print_kv("Direction", DISPLAY_LABELS[predicted_class])
 
-    print_footer("Simulation terminee")
+    print_kv("Classes", str({k: TARGET_LABELS[k] for k in [0, 1, 2]}))
+    print_footer("Prediction terminee — indicative, pas conseil de pari")
 
 
 if __name__ == "__main__":

@@ -1,79 +1,40 @@
-import os
+from __future__ import annotations
 
-import numpy as np
-import pandas as pd
-
-from console import (
-    configure_console,
-    count_hidden_cl_matches,
-    filter_cl_from_quarters,
-    print_cl_knockout_table,
-    print_footer,
-    print_header,
-    print_kv,
-    print_section,
-)
-
-configure_console()
+from config import load_config
+from console import configure_console, print_footer, print_header, print_kv, print_status, print_table
+from data.loaders import load_json, load_matches, save_dataset
+from data.split import split_train_test
+from features.pipeline import build_dataset
 
 
-def prepare_dataset(matches_df: pd.DataFrame, split_date: str = "2025-08-01") -> tuple:
-    """
-    Etape 4 : choix de la cible et split temporel.
+def main() -> None:
+    configure_console()
+    config = load_config()
+    print_header("Dataset professionnel anti-leakage")
 
-    Arguments:
-    - matches_df : DataFrame contenant les matchs avec Date, Home_Goals, Away_Goals
-    - split_date : date de separation chronologique
+    raw = load_matches(config["data"]["raw_matches_path"])
+    injuries = load_json(config["data"]["injuries_path"], default={})
+    result = build_dataset(raw, config, injuries)
+    train_df, test_df = split_train_test(result.dataset, config["data"]["split_date"])
 
-    Retourne:
-    - train_df, test_df
-    """
-    print_header("Etape 4 : Cible & split temporel")
-    print()
+    save_dataset(result.dataset, config["data"]["processed_dataset_path"])
+    save_dataset(train_df, config["data"]["train_path"])
+    save_dataset(test_df, config["data"]["test_path"])
 
-    df = matches_df.copy()
-    df["Date"] = pd.to_datetime(df["Date"])
-
-    # Cible 1N2 :
-    # 0 = equipe Home gagne, 1 = match nul, 2 = equipe Away gagne
-    df["y_target"] = np.select(
+    print_table(
+        ["Dataset", "Rows", "Start", "End"],
         [
-            df["Home_Goals"] > df["Away_Goals"],
-            df["Home_Goals"] == df["Away_Goals"],
-            df["Home_Goals"] < df["Away_Goals"],
+            ["Train", len(train_df), train_df["Date"].min().date(), train_df["Date"].max().date()],
+            ["Test", len(test_df), test_df["Date"].min().date(), test_df["Date"].max().date()],
+            ["All", len(result.dataset), result.dataset["Date"].min().date(), result.dataset["Date"].max().date()],
         ],
-        [0, 1, 2],
     )
-    print_kv("Cible y_target", "0 = domicile gagne, 1 = nul, 2 = exterieur gagne")
-
-    df = df.sort_values(by="Date").reset_index(drop=True)
-
-    train_df = df[df["Date"] < split_date].copy()
-    test_df = df[df["Date"] >= split_date].copy()
-
-    print_kv("Date de coupure", split_date)
-    print_kv("Train", f"{len(train_df)} matchs")
-    print_kv("Test", f"{len(test_df)} matchs")
-    hidden = count_hidden_cl_matches(test_df)
-    if hidden:
-        print_kv("LDC masques (test)", f"{hidden} matchs avant quarts de finale")
-    cl_test = filter_cl_from_quarters(test_df)
-    if not cl_test.empty:
-        print_section("LDC dans le jeu de test (quarts -> finale)")
-        print_cl_knockout_table(cl_test, team_perspective=True)
-
-    return train_df, test_df
+    print_kv("Feature columns", str(len(result.feature_columns)))
+    print_kv("Categorical columns", ", ".join(result.categorical_columns) or "none")
+    print_status("Chronological split", train_df["Date"].max() < test_df["Date"].min())
+    print_status("Target available", result.dataset["y_target"].notna().all())
+    print_footer("Datasets sauvegardes")
 
 
 if __name__ == "__main__":
-    data_path = os.path.join("data", "raw", "psg_arsenal_combined.csv")
-    if os.path.exists(data_path):
-        df = pd.read_csv(data_path)
-        train, test = prepare_dataset(df, split_date="2026-01-01")
-
-        os.makedirs("data/processed", exist_ok=True)
-        train.to_csv("data/processed/train_dataset.csv", index=False)
-        test.to_csv("data/processed/test_dataset.csv", index=False)
-        print_footer("Datasets sauvegardes -> data/processed/")
-    else:
-        print("  Fichier de donnees non trouve. Lancez src/scrapper.py d'abord.")
+    main()
